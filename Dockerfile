@@ -1,8 +1,9 @@
 FROM n8nio/n8n:latest
 
+# Usar root para instalar pacotes
 USER root
 
-# Install Chromium and its Alpine dependencies
+# Instalar Chromium e dependências (Alpine)
 RUN apk add --no-cache \
     chromium \
     nss \
@@ -13,15 +14,17 @@ RUN apk add --no-cache \
     nodejs \
     npm
 
-# Tell Puppeteer not to download Chromium because we already installed it
+# Configurar Puppeteer para usar o Chromium já instalado
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser \
+    PUPPETEER_PRODUCT=chrome
 
-# Install Puppeteer
-RUN cd /data && npm init -y && npm install puppeteer
+# Criar diretório /data e instalar Puppeteer lá
+RUN mkdir -p /data && cd /data && npm init -y && npm install puppeteer
 
-# Return to the default unprivileged user
+# Voltar para o usuário padrão do n8n
 USER node
+
 
 
 RUN npm install mammoth
